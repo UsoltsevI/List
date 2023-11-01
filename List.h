@@ -6,7 +6,6 @@
 
 typedef int TypeElem;
 const size_t Poison = -22;
-const size_t len_names = 13;
 #define DEBUGONL
 
 struct List {
@@ -62,13 +61,11 @@ int list_realloc(struct List *list, const size_t new_capacity);
 int list_dump_html(struct List *list, FILE *dump_file_html, const int line, const char *func, const char *file);
 int list_dump_file(const struct List *list, FILE *dump_file, const int line, const char *func, const char *file);
 int list_dump_scheme(const struct List *list, const char *graph_file_name);
-char *generate_system_command(char graph_file_name_dot[len_names], char graph_file_name_png[len_names]);
-int generate_name_graph(char graph_file_name[12], const size_t num, const char type[4]);
-void decrypt_errors(const int error, const char *name_called_func, const int line, const char *func, const char *file, FILE* err_file);
 
 #define LIST_DUMP(list) list_dump(list, __LINE__, __func__, __FILE__)
 
 #ifdef DEBUGONL
+void decrypt_errors(const int error, const char *name_called_func, const int line, const char *func, const char *file, FILE* err_file);
 #define DECRYPT_ERRORS(err, err_file) \
     decrypt_errors(err, #err, __LINE__, __func__, __FILE__, err_file)
 

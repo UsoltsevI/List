@@ -44,9 +44,7 @@ int list_ctor(struct List *list, size_t beg_capacity) {
 
     list->data[list->capacity + 1] = (TypeElem) Poison;
     list->next[list->capacity + 1] = list->last_free;
-    //printf("last_free = %lu\n", list->last_free);
     list->prev[list->capacity + 1] = Poison;
-
 
     return ok;
 }
@@ -97,19 +95,15 @@ int list_ver(const struct List *list) {
         return size_capt;
 
     for (size_t i = 0; i < list->capacity + 2; i++) {
-        if (list->next[i] >= list->capacity + 2) { //something special for debugging
-            //printf("(list->next[%lu]  = %lu ) >= (list->capacity + 2 = %lu)\n", i, list->next[i], list->capacity + 2);
+        if (list->next[i] >= list->capacity + 2) 
             return impos_val_next;
-        }
         
         if ((list->prev[i] >= list->capacity + 2) && (list->prev[i] != Poison))
             return impos_val_prev;
     }
     
-    if ((list->free >= list->capacity + 2) || (list->free < 2)) {
-        //printf("(list->free = %lu ) >= (list->capacity + 2 = %lu)\n", list->free, list->capacity + 2);
+    if ((list->free >= list->capacity + 2) || (list->free < 2)) 
         return impos_val_free;
-    }
     
     if ((list->last_free >= list->capacity + 2) || (list->free < 2))
         return impos_val_last_free;
@@ -357,22 +351,32 @@ int list_dump_html(struct List *list, FILE *dump_file_html, const int line, cons
     if (check) return check;
 
     static size_t num = 0;
-    char graph_file_name_dot[len_names] = {};
-    char graph_file_name_png[len_names] = {};
 
     fprintf(dump_file_html, "<pre>\n");
 
     list_dump_file(list, dump_file_html, line, func, file);
-    
-    generate_name_graph(graph_file_name_dot, num, ".dot");
-    //printf("%s\n", graph_file_name_dot);
-    generate_name_graph(graph_file_name_png, num, ".png");
-    //printf("%s\n", graph_file_name_png);
 
-    //printf("%s\n", graph_file_name_dot);
+    char graph_file_name_dot[13] = "graph000.dot";
+    char graph_file_name_png[13] = "graph000.png";
+                                  //01234567890123456789
+    graph_file_name_dot[5] = num / 100 + '0';
+    graph_file_name_png[5] = num / 100 + '0';
+    graph_file_name_dot[6] = (num % 100) / 10 + '0';
+    graph_file_name_png[6] = (num % 100) / 10 + '0';
+    graph_file_name_dot[7] = num % 10 + '0';
+    graph_file_name_png[7] = num % 10 + '0';
+
     list_dump_scheme(list, graph_file_name_dot);
 
-    char *to_system = generate_system_command(graph_file_name_dot, graph_file_name_png);
+    char to_system[40] = "dot -T png graph000.dot -o graph000.png";
+                        //01234567890123456789012345678901234567890
+    to_system[16] = num / 100 + '0';
+    to_system[32] = num / 100 + '0';
+    to_system[17] = (num % 100) / 10 + '0';
+    to_system[33] = (num % 100) / 10 + '0';
+    to_system[18] = num % 10 + '0';
+    to_system[34] = num % 10 + '0';
+
     printf("%s\n", to_system);
     system(to_system);
 
@@ -381,70 +385,6 @@ int list_dump_html(struct List *list, FILE *dump_file_html, const int line, cons
     num++;
 
     return ok;
-}
-
-char *generate_system_command(char graph_file_name_dot[len_names], char graph_file_name_png[len_names]) {
-    char *result = (char *) calloc(len_names * 2 + 10, sizeof(char));
-    size_t i = 0;
-    size_t h = 0;
-    result[i++] = 'd';
-    result[i++] = 'o';
-    result[i++] = 't';
-    result[i++] = ' ';
-    result[i++] = '-';
-    result[i++] = 'T';
-    result[i++] = ' ';
-    result[i++] = 'p';
-    result[i++] = 'n';
-    result[i++] = 'g';
-    result[i++] = ' ';
-
-    h = i;
-
-    while (i - h < len_names - 1) {
-        result[i] = graph_file_name_dot[(i - h)];
-        i++;
-    }
-
-    result[i++] = ' ';
-    result[i++] = '-';
-    result[i++] = 'o';
-    result[i++] = ' ';
-
-    h = i;
-
-    while (i - h < len_names) {
-        result[i] = graph_file_name_png[(i - h)];
-        //printf("%c ", result[i]);
-        i++;
-    }
-
-    result[i++] = '\0';
-
-    return result;
-}
-
-int generate_name_graph(char graph_file_name[len_names], const size_t num, const char type[4]) {
-    if (len_names < 13) {
-        printf("Impossible len_name \n");
-        return -1;
-    }
-
-    graph_file_name[0] = 'g';
-    graph_file_name[1] = 'r';
-    graph_file_name[2] = 'a';
-    graph_file_name[3] = 'p';
-    graph_file_name[4] = 'h';
-    graph_file_name[5] = num / 100 + '0';
-    graph_file_name[6] = (num % 100) / 10 + '0';
-    graph_file_name[7] = num % 10 + '0';
-    graph_file_name[8] = type[0];
-    graph_file_name[9] = type[1];
-    graph_file_name[10] = type[2];
-    graph_file_name[11] = type[3];
-    graph_file_name[len_names - 1] = '\0';
-
-    return 0;
 }
 
 int list_dump_file(const struct List *list, FILE *dump_file, const int line, const char *func, const char *file) {
@@ -524,7 +464,7 @@ int list_dump_scheme(const struct List *list, const char *graph_file_name) {
     FILE* graph_file = fopen(graph_file_name, "w");
 
     fprintf(graph_file, "digraph {\n");
-    fprintf(graph_file, "\trankdir = HR;\n");
+    fprintf(graph_file, "\trankdir = TB;\n");
     fprintf(graph_file, "\tnode [shape = record];\n\n");
 
     fprintf(graph_file, "\tstruct0 [shape = record, label = \" {data\\[0\\] (Head) | %d |{<fp0> prev %lu | <fn0> next %lu}} \"]; \n", (int) list->data[0], list->prev[0], list->next[0]);
