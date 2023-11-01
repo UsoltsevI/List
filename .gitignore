@@ -1,0 +1,19 @@
+graph000.dot
+graph001.dot
+graph002.dot
+graph003.dot
+graph004.dot
+graph005.dot
+
+graph000.png
+graph001.png
+graph002.png
+graph003.png
+graph004.png
+graph005.png
+p1.png 
+err.txt 
+graph000.dot graph000.png
+graph001.dot graph001.png
+ListTest.o
+List.o 
