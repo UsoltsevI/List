@@ -60,9 +60,11 @@ int conditional_realloc_increase(struct List *list);
 int list_realloc(struct List *list, const size_t new_capacity);
 int list_dump_html(struct List *list, FILE *dump_file_html, const int line, const char *func, const char *file);
 int list_dump_file(const struct List *list, FILE *dump_file, const int line, const char *func, const char *file);
-int list_dump_scheme(const struct List *list, const char *graph_file_name);
+int list_dump_scheme(const struct List *list, const char *graph_file_name, const char *list_name);
 
 #define LIST_DUMP(list) list_dump(list, __LINE__, __func__, __FILE__)
+#define LIST_DUMP_HTML(list, dump_file_html) list_dump_html(list, dump_file_html, __LINE__, __func__, __FILE__);
+#define LIST_DUMP_SCHEME(list, graph_file_name) list_dump_scheme(list, graph_file_name, #list);
 
 #ifdef DEBUGONL
 void decrypt_errors(const int error, const char *name_called_func, const int line, const char *func, const char *file, FILE* err_file);

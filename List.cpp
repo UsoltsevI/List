@@ -188,9 +188,9 @@ int list_push_back(struct List *list, const TypeElem new_elem) {
     return ok;
 }
 
-int list_push_brfore(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem) {
+int list_push_brfore(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem) { 
     int check = list_ver(list);
-    if (check) return check;
+    if (check) return check; //some incorrect condition and enter variables...
 
     conditional_realloc_increase(list);
 
@@ -279,12 +279,11 @@ size_t list_search_by_number(struct List *list, const size_t num) {
     if (num > list->size) return -1;
 
     size_t i = 2;
+    size_t count = 0;
 
-    while (i < num + 2) {
-        if (list->next[i] == list->tail)
-            return -1;
-        
+    while (count < num) {    
         i = list->next[i];
+        count++;
     }
 
     return i - 2;
@@ -366,7 +365,7 @@ int list_dump_html(struct List *list, FILE *dump_file_html, const int line, cons
     graph_file_name_dot[7] = num % 10 + '0';
     graph_file_name_png[7] = num % 10 + '0';
 
-    list_dump_scheme(list, graph_file_name_dot);
+    LIST_DUMP_SCHEME(list, graph_file_name_dot);
 
     char to_system[40] = "dot -T png graph000.dot -o graph000.png";
                         //01234567890123456789012345678901234567890
@@ -457,7 +456,7 @@ int list_dump_file(const struct List *list, FILE *dump_file, const int line, con
     return ok;
 }
 
-int list_dump_scheme(const struct List *list, const char *graph_file_name) {
+int list_dump_scheme(const struct List *list, const char *graph_file_name, const char *list_name) {
     int check = list_ver(list);
     if (check) return check;
 
@@ -467,24 +466,31 @@ int list_dump_scheme(const struct List *list, const char *graph_file_name) {
     fprintf(graph_file, "\trankdir = TB;\n");
     fprintf(graph_file, "\tnode [shape = record];\n\n");
 
-    fprintf(graph_file, "\tstruct0 [shape = record, label = \" {data\\[0\\] (Head) | %d |{<fp0> prev %lu | <fn0> next %lu}} \"]; \n", (int) list->data[0], list->prev[0], list->next[0]);
-    fprintf(graph_file, "\tstruct1 [shape = record, label = \" {data\\[1\\] (Tail) | %d |{<fp1> prev %lu | <fn1> next %lu}} \"]; \n", (int) list->data[1], list->prev[1], list->next[1]);
+    fprintf(graph_file, "List [shape = \"record\", style = \"filled\", fillcolor = \"#e5ff15\",  label = \"{ name: %s | size: 7 | capacity: 12 | <H> head: 0 | <T> tail: 1 | <F> free: %lu | <LF> last_free: %lu} \"]\n", list_name, list->free, list->last_free);
+
+    fprintf(graph_file, "\tstruct0 [shape = record, style = \"filled\", fillcolor = \"#8888ff\", label = \" {data\\[0\\] (Head) | %d |{<fp0> prev %lu | <fn0> next %lu}} \"]; \n", (int) list->data[list->head], list->prev[list->head], list->next[list->head]);
+    fprintf(graph_file, "\tstruct1 [shape = record, style = \"filled\", fillcolor = \"#ff5555\", label = \" {data\\[1\\] (Tail) | %d |{<fp1> prev %lu | <fn1> next %lu}} \"]; \n", (int) list->data[list->tail], list->prev[list->tail], list->next[list->tail]);
+
+    fprintf(graph_file, "\tList:<H> -> struct0");
+    fprintf(graph_file, "\tList:<T> -> struct1");
+    fprintf(graph_file, "\tList:<F> -> free");
+    fprintf(graph_file, "\tList:<LF> -> last_free");
 
     for (size_t i = 2; i < list->capacity + 2; i++) {
         if (list->data[i] != Poison) {
             if (list->data[i] != Poison) {
-                fprintf(graph_file, "\tstruct%lu [shape = record, label = \" {data\\[%lu\\] | %d |{<fp%lu> prev %lu | <fn%lu> next %lu}} \"]; \n", i, i, (int) list->data[i], i, list->prev[i], i, list->next[i]);
+                fprintf(graph_file, "\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#8ef482\", label = \" {data\\[%lu\\] | %d |{<fp%lu> prev %lu | <fn%lu> next %lu}} \"]; \n", i, i, (int) list->data[i], i, list->prev[i], i, list->next[i]);
 
             } else {
-                fprintf(graph_file, "\tstruct%lu [shape = record, label = \" {data\\[%lu\\] | %d |{<fp%lu> prev Poison | <fn%lu> next %lu}} \"]; \n", i, i, (int) list->data[i], i, i, list->next[i]);
+                fprintf(graph_file, "\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#8ef482\", label = \" {data\\[%lu\\] | %d |{<fp%lu> prev Poison | <fn%lu> next %lu}} \"]; \n", i, i, (int) list->data[i], i, i, list->next[i]);
             }
 
         } else {
             if (list->data[i] != Poison) {
-                fprintf(graph_file, "\tstruct%lu [shape = record, label = \" {data\\[%lu\\] | Poison |{<fp%lu> prev %lu | <fn%lu> next %lu}} \"]; \n", i, i, i, list->prev[i], i, list->next[i]);
+                fprintf(graph_file, "\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#8ef482\", label = \" {data\\[%lu\\] | Poison |{<fp%lu> prev %lu | <fn%lu> next %lu}} \"]; \n", i, i, i, list->prev[i], i, list->next[i]);
 
             } else {
-                fprintf(graph_file, "\tstruct%lu [shape = record, label = \" {data\\[%lu\\] | Poison |{<fp%lu> prev Poison | <fn%lu> next %lu}} \"]; \n", i, i, i, i, list->next[i]);
+                fprintf(graph_file, "\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#8ef482\", label = \" {data\\[%lu\\] | Poison |{<fp%lu> prev Poison | <fn%lu> next %lu}} \"]; \n", i, i, i, i, list->next[i]);
             }
         }
     }
@@ -493,6 +499,9 @@ int list_dump_scheme(const struct List *list, const char *graph_file_name) {
 
     for (size_t i = 0; i < list->capacity + 2; i++)
         fprintf(graph_file, "\tstruct%lu:<fn%lu> -> struct%lu:<fp%lu> [color = \"red\"];\n", i, i, list->next[i], list->next[i]);
+
+    fprintf(graph_file, "\tfree [shape = record, style = \"filled\", fillcolor = \"#6666aa\", label = \"free\"]; \n");
+    fprintf(graph_file, "\tlast_free [shape = record, style = \"filled\", fillcolor = \"#cc5555\", label = \"last_free\"]; \n");
 
     fprintf(graph_file, "\n\tfree -> struct%lu:<fp%lu>\n", list->free, list->free);
     fprintf(graph_file, "\n\tlast_free -> struct%lu:<fp%lu>\n", list->last_free, list->last_free);
