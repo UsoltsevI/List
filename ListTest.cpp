@@ -6,7 +6,7 @@ int main() {
     struct List list = {};
 
     FILE *err_file = fopen("err.txt", "w");
-    FILE* dump_htm = fopen("dump.htm", "w");
+    FILE* dump_htm = fopen("/home/uso/C_projects/Ded/List/dump/dump.htm", "w");
 
     DECRYPT_ERRORS(list_ctor(&list, 2), err_file);
     DECRYPT_ERRORS(list_ver(&list), err_file);
@@ -14,18 +14,22 @@ int main() {
     DECRYPT_ERRORS(list_push_front(&list, 14), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 15), err_file);
     DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
-    /*DECRYPT_ERRORS(list_push_back(&list, 16), err_file);
+    DECRYPT_ERRORS(list_push_back(&list, 16), err_file);
     DECRYPT_ERRORS(list_push_back(&list, 17), err_file);
     DECRYPT_ERRORS(list_push_back(&list, 18), err_file);
     DECRYPT_ERRORS(list_push_back(&list, 19), err_file);
-    //DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
+    DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 20), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 21), err_file);
-    DECRYPT_ERRORS(list_push_front(&list, 22), err_file);*/
+    DECRYPT_ERRORS(list_push_front(&list, 22), err_file);
 
     //DECRYPT_ERRORS(list_dump(&list, __LINE__, __func__, __FILE__), err_file);
 
-    //DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
+    DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
+
+    DECRYPT_ERRORS(list_resize(&list, list.size + 1), err_file);
+
+    DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
 
     //list_dump_scheme(&list, "graph.dot");
     //system("dot -Tpng graph.dot -o p1.png");

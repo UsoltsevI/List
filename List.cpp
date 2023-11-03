@@ -95,8 +95,10 @@ int list_ver(const struct List *list) {
         return size_capt;
 
     for (size_t i = 0; i < list->capacity + 2; i++) {
-        if (list->next[i] >= list->capacity + 2) 
+        if (list->next[i] >= list->capacity + 2) {
+            printf("list->next[%lu]  = %lu >= list->capacity + 2 = %lu\n", i, list->next[i], list->capacity + 2);
             return impos_val_next;
+        }
         
         if ((list->prev[i] >= list->capacity + 2) && (list->prev[i] != Poison))
             return impos_val_prev;
@@ -346,9 +348,98 @@ int list_realloc(struct List *list, const size_t new_capacity) {
     return ok;
 }
 
+int list_resize(struct List *list, const size_t new_capacity) {
+    int check = list_ver(list);
+    if (check) return check;
+
+    if (new_capacity >= list->capacity)
+        return list_realloc(list, new_capacity);
+    
+    if (new_capacity < list->size + 1)
+        return impos_new_cap;
+
+    size_t cur_pos = list->next[list->head];
+
+    for (size_t i = 0; i < list->size; i++) {
+        if (cur_pos > list->size + 1) {
+            while (list->free > list->size + 1) {
+                list->free = list->next[list->free];
+                
+                if (list->free == list->last_free) 
+                    break;
+            }
+
+            if (list->free > list->size + 1)
+                return fall_from_finding_suitable_free_space;
+            
+            list_swap_places_by_addresses(list, cur_pos, list->free);
+        }
+
+        cur_pos = list->next[cur_pos];
+    }
+
+    cur_pos = list->next[list->free];
+
+    for (size_t i = 0; i < new_capacity - list->size; i++) {
+        if (cur_pos > list->size + 1) {
+            size_t score = 0;
+
+            while (list->free > new_capacity + 1) {
+                list->free = list->next[list->free];
+
+                score++;
+
+                if (score > list->capacity)
+                    return path_to_eternity;
+            }
+
+            if (list->free > new_capacity + 1)
+                return fall_from_finding_suitable_free_space;
+            
+            list_swap_places_by_addresses(list, cur_pos, list->free);
+        }
+
+        cur_pos = list->next[cur_pos];
+    }
+
+    list->next[list->free] = list->free;
+    list->last_free = list->free;
+    
+    return list_realloc(list, new_capacity);
+}
+
+int list_swap_places_by_addresses(struct List *list, const size_t pos1, const size_t pos2) {
+    int check = list_ver(list);
+    if (check) return check;
+
+    if ((pos1 > list->capacity + 1) || (pos2 > list->capacity + 1))
+        return impos_enter_addres;
+    
+    TypeElem data_h = list->data[pos1];
+    size_t next_h = list->next[pos1];
+    size_t prev_h = list->prev[pos1];
+
+    list->data[pos1] = list->data[pos2];
+    list->next[pos1] = list->next[pos2];
+    list->prev[list->next[pos1]] = pos1;
+    list->prev[pos1] = list->prev[pos2];
+    list->next[list->prev[pos1]] = pos1;
+
+    list->data[pos2] = data_h;
+    list->next[pos2] = next_h;
+    list->prev[list->next[pos2]] = pos2;
+    list->prev[pos2] = prev_h;
+    list->next[list->prev[pos2]] = pos2;
+
+    return ok;
+}
+
+
 int list_dump_html(struct List *list, FILE *dump_file_html, const int line, const char *func, const char *file) {
     int check = list_ver(list);
     if (check) return check;
+
+    if (dump_file_html == NULL) return null_file;
 
     static size_t num = 0;
 
@@ -356,31 +447,33 @@ int list_dump_html(struct List *list, FILE *dump_file_html, const int line, cons
 
     list_dump_file(list, dump_file_html, line, func, file);
 
-    char graph_file_name_dot[13] = "graph000.dot";
-    char graph_file_name_png[13] = "graph000.png";
-                                  //01234567890123456789
-    graph_file_name_dot[5] = num / 100 + '0';
-    graph_file_name_png[5] = num / 100 + '0';
-    graph_file_name_dot[6] = (num % 100) / 10 + '0';
-    graph_file_name_png[6] = (num % 100) / 10 + '0';
-    graph_file_name_dot[7] = num % 10 + '0';
-    graph_file_name_png[7] = num % 10 + '0';
+    char graph_file_name_dot[50] = "/home/uso/C_projects/Ded/List/dump/graph000.dot";
+    char graph_file_name_png[50] = "/home/uso/C_projects/Ded/List/dump/graph000.png";
+                                  //012345678901234567890123456789012345678901234567890
+                                  //0         1         2         3         4         5
+    graph_file_name_dot[40] = num / 100 + '0';
+    graph_file_name_png[40] = num / 100 + '0';
+    graph_file_name_dot[41] = (num % 100) / 10 + '0';
+    graph_file_name_png[41] = (num % 100) / 10 + '0';
+    graph_file_name_dot[42] = num % 10 + '0';
+    graph_file_name_png[42] = num % 10 + '0';
 
     LIST_DUMP_SCHEME(list, graph_file_name_dot);
 
-    char to_system[40] = "dot -T png graph000.dot -o graph000.png";
-                        //01234567890123456789012345678901234567890
-    to_system[16] = num / 100 + '0';
-    to_system[32] = num / 100 + '0';
-    to_system[17] = (num % 100) / 10 + '0';
-    to_system[33] = (num % 100) / 10 + '0';
-    to_system[18] = num % 10 + '0';
-    to_system[34] = num % 10 + '0';
+    char to_system[110] = "dot -T png /home/uso/C_projects/Ded/List/dump/graph000.dot -o /home/uso/C_projects/Ded/List/dump/graph000.png";
+                         //012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+                         //0         1         2         3         4         5         6         7         8         9         10        11
+    to_system[51] = num / 100 + '0';
+    to_system[102] = num / 100 + '0';
+    to_system[52] = (num % 100) / 10 + '0';
+    to_system[103] = (num % 100) / 10 + '0';
+    to_system[53] = num % 10 + '0';
+    to_system[104] = num % 10 + '0';
 
     printf("%s\n", to_system);
     system(to_system);
 
-    fprintf(dump_file_html, "<img src = \"%s\" />\n", graph_file_name_png);
+    fprintf(dump_file_html, "<img src = \"%s\" />\n", &graph_file_name_png[35]);
 
     num++;
 
@@ -390,6 +483,8 @@ int list_dump_html(struct List *list, FILE *dump_file_html, const int line, cons
 int list_dump_file(const struct List *list, FILE *dump_file, const int line, const char *func, const char *file) {
     int check = list_ver(list);
     if (check) return check;
+
+    if (dump_file == NULL) return null_file;
 
     fprintf(dump_file, "In file %s in func %s at line %d\n", file, func, line);
 
@@ -460,6 +555,8 @@ int list_dump_file(const struct List *list, FILE *dump_file, const int line, con
 int list_dump_scheme(const struct List *list, const char *graph_file_name, const char *list_name) {
     int check = list_ver(list);
     if (check) return check;
+
+    if (graph_file_name == NULL) return null_file_name;
 
     FILE* graph_file = fopen(graph_file_name, "w");
 
@@ -537,7 +634,7 @@ void decrypt_errors(const int error, const char *name_called_func, const int lin
 
 #define ERROR(a)                        \
     case a:                             \
-        fprintf(err_file, #a "\n");     \
+        fprintf(err_file, "%s\n", #a);  \
         break;                          
 
         ERROR(null_enter);
@@ -556,6 +653,11 @@ void decrypt_errors(const int error, const char *name_called_func, const int lin
         ERROR(impos_val_last_free);
         ERROR(impos_enter_addres); 
         ERROR(just_free_elem);
+        ERROR(null_file);
+        ERROR(null_file_name);
+        ERROR(impos_new_cap);
+        ERROR(path_to_eternity);
+        ERROR(fall_from_finding_suitable_free_space);
 
 #undef ERROR
 

@@ -39,6 +39,11 @@ enum {
     impos_val_last_free = 12,
     impos_enter_addres = 13,
     just_free_elem = 14,
+    null_file = 15,
+    null_file_name = 16,
+    impos_new_cap = 17,
+    path_to_eternity = 18,
+    fall_from_finding_suitable_free_space = 19,
 };
 
 int list_ctor(struct List *list, size_t beg_capacity);
@@ -58,6 +63,8 @@ size_t list_search_by_number(struct List *list, const size_t num);
 int list_destroy_humanity(struct List *list);
 int conditional_realloc_increase(struct List *list);
 int list_realloc(struct List *list, const size_t new_capacity);
+int list_resize(struct List *list, const size_t new_capacity);
+int list_swap_places_by_addresses(struct List *list, const size_t pos1, const size_t pos2);
 int list_dump_html(struct List *list, FILE *dump_file_html, const int line, const char *func, const char *file);
 int list_dump_file(const struct List *list, FILE *dump_file, const int line, const char *func, const char *file);
 int list_dump_scheme(const struct List *list, const char *graph_file_name, const char *list_name);
