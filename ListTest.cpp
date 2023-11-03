@@ -12,7 +12,7 @@ int main() {
     DECRYPT_ERRORS(list_ver(&list), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 13), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 14), err_file);
-    DECRYPT_ERRORS(list_push_back(&list, 15), err_file);
+    DECRYPT_ERRORS(list_push_front(&list, 15), err_file);
     DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
     /*DECRYPT_ERRORS(list_push_back(&list, 16), err_file);
     DECRYPT_ERRORS(list_push_back(&list, 17), err_file);
