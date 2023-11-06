@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef int TypeElem;
 const size_t Poison = -22;
@@ -22,7 +23,7 @@ struct List {
     bool is_dtor;
 };
 
-enum {
+enum {//list errors
     null_enter = -1,
     ok = 0,
     null_malloc = 1,
@@ -53,10 +54,10 @@ size_t list_top(const struct List *list);
 size_t list_end(const struct List *list);
 size_t list_next_elem(const struct List *list, const size_t position);
 size_t list_prev_elem(const struct List *list, const size_t position);
-int list_push_front(struct List *list, const TypeElem new_elem);
-int list_push_back(struct List *list, const TypeElem new_elem);
-int list_push_brfore(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem);
-int list_push_after(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem);
+int list_push_front(struct List *list, const TypeElem new_elem, size_t *ret_addres);
+int list_push_back(struct List *list, const TypeElem new_elem, size_t *ret_addres);
+int list_push_before(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem, size_t *ret_addres);
+int list_push_after(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem, size_t *ret_addres);
 int list_remove(struct List *list, const size_t addres_rem_elem);
 size_t list_search_by_value(struct List *list, const TypeElem value);
 size_t list_search_by_number(struct List *list, const size_t num);
@@ -64,6 +65,10 @@ int list_destroy_humanity(struct List *list);
 int conditional_realloc_increase(struct List *list);
 int list_realloc(struct List *list, const size_t new_capacity);
 int list_resize(struct List *list, const size_t new_capacity);
+int list_resize_above_size(struct List *list, const size_t new_capacity);
+int list_align_ids_by_addresses(struct List *list);
+int list_stack(struct List *list, size_t last_acceptable_addres);
+int list_stack_free(struct List *list, size_t last_acceptable_addres);
 int list_swap_places_by_addresses(struct List *list, const size_t pos1, const size_t pos2);
 int list_dump_html(struct List *list, FILE *dump_file_html, const int line, const char *func, const char *file);
 int list_dump_file(const struct List *list, FILE *dump_file, const int line, const char *func, const char *file);

@@ -1,5 +1,18 @@
 #include "List.h"
 
+#ifdef DEBUGONL
+
+FILE *list_dump_file_html = {};
+#define DUMP_OPEN list_dump_file_html = fopen("dump/dump_file_html.htm", "w");
+#define DUMP_CLOSE fclose(list_dump_file_html);
+#define DUMP list_dump_html(list, list_dump_file_html, __LINE__, __func__, __FILE__);  
+#else 
+
+#define DUMP_OPEN ;
+#define DUMP ;
+#define DUMP_CLOSE ;
+
+#endif 
 int list_ctor(struct List *list, size_t beg_capacity) {
     if (list == NULL)
         return null_enter;
@@ -46,12 +59,22 @@ int list_ctor(struct List *list, size_t beg_capacity) {
     list->next[list->capacity + 1] = list->last_free;
     list->prev[list->capacity + 1] = Poison;
 
+    DUMP_OPEN;
+
+    DUMP;
+
     return ok;
 }
 
 int list_dtor(struct List *list) {
     int check = list_ver(list);
-    if (check) return check;
+    if (check) { 
+        DUMP_CLOSE;
+        return check;
+    }
+
+    DUMP;
+    DUMP_CLOSE;
 
     free(list->data);
     free(list->next);
@@ -95,10 +118,8 @@ int list_ver(const struct List *list) {
         return size_capt;
 
     for (size_t i = 0; i < list->capacity + 2; i++) {
-        if (list->next[i] >= list->capacity + 2) {
-            printf("list->next[%lu]  = %lu >= list->capacity + 2 = %lu\n", i, list->next[i], list->capacity + 2);
+        if (list->next[i] >= list->capacity + 2)
             return impos_val_next;
-        }
         
         if ((list->prev[i] >= list->capacity + 2) && (list->prev[i] != Poison))
             return impos_val_prev;
@@ -149,92 +170,42 @@ size_t list_prev_elem(const struct List *list, const size_t position) {
     return list->prev[position + 2];
 }
 
-int list_push_front(struct List *list, const TypeElem new_elem) {
+int list_push_front(struct List *list, const TypeElem new_elem, size_t *ret_addres) {
+    return list_push_after(list, list->head, new_elem, ret_addres);
+}
+
+int list_push_back(struct List *list, const TypeElem new_elem, size_t *ret_addres) {
+    return list_push_after(list, list->prev[list->tail], new_elem, ret_addres);
+}
+
+int list_push_before(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem, size_t *ret_addres) { 
+    return list_push_after(list, list->prev[addres_ref_elem], new_elem, ret_addres);
+}
+
+int list_push_after(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem, size_t *ret_addres) {
     int check = list_ver(list);
     if (check) return check;
 
     conditional_realloc_increase(list);
 
-    size_t addres_new_elem = list->free;
-    list->free = list->next[list->free];
-    list->data[addres_new_elem] = new_elem;
-    list->next[addres_new_elem] = list->next[list->head];
-    list->prev[addres_new_elem] = list->head;
-    list->next[list->head] = addres_new_elem;
-    list->prev[list->next[addres_new_elem]] = addres_new_elem;//add!!!
-    list->size++;
-
-    if (list->size == 1)
-        list->prev[list->tail] = addres_new_elem;
-
-    return ok;
-}
-
-int list_push_back(struct List *list, const TypeElem new_elem) {
-    int check = list_ver(list);
-    if (check) return check;
-
-    conditional_realloc_increase(list);
-
-    size_t addres_new_elem = list->free;
-    list->free = list->next[list->free]; 
-    list->data[addres_new_elem] = new_elem;
-    list->next[addres_new_elem] = list->tail;
-    list->prev[addres_new_elem] = list->prev[list->tail];
-    list->next[list->prev[list->tail]] = addres_new_elem;
-    list->prev[list->tail] = addres_new_elem;
-    list->size++;
-
-    if (list->size == 1)
-        list->prev[list->tail] = addres_new_elem;
-
-    return ok;
-}
-
-int list_push_brfore(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem) { 
-    int check = list_ver(list);
-    if (check) return check; //some incorrect condition and enter variables...
-
-    conditional_realloc_increase(list);
-
-    if (addres_ref_elem >= list->capacity)
-        return impos_enter_addres;
-
-    size_t addres_new_elem = list->free;
-    list->free = list->next[list->free];
-    list->data[addres_new_elem] = new_elem;
-    list->next[addres_new_elem] = addres_ref_elem + 2;
-    list->prev[addres_new_elem] = list->prev[addres_ref_elem + 2];
-    list->next[list->prev[addres_ref_elem + 2]] = addres_new_elem;
-    list->prev[addres_ref_elem + 2] = addres_new_elem;
-    list->size++;
-
-    if (list->size == 1)
-        list->prev[list->tail] = addres_new_elem;
-
-    return ok;
-}
-
-int list_push_after(struct List *list, const size_t addres_ref_elem, const TypeElem new_elem) {
-    int check = list_ver(list);
-    if (check) return check;
-
-    conditional_realloc_increase(list);
-
-    if (addres_ref_elem >= list->capacity)
+    if (addres_ref_elem >= list->capacity + 2)
         return impos_enter_addres;
 
     size_t addres_new_elem = list->free;
     list->free = list->next[list->free]; 
     list->data[addres_new_elem] = new_elem;
-    list->next[addres_new_elem] = list->next[addres_ref_elem + 2];
-    list->prev[addres_new_elem] = addres_ref_elem + 2;
-    list->prev[list->next[addres_ref_elem + 2]] = addres_new_elem;
-    list->next[addres_ref_elem + 2] = addres_new_elem;
+    list->next[addres_new_elem] = list->next[addres_ref_elem];
+    list->prev[addres_new_elem] = addres_ref_elem;
+    list->prev[list->next[addres_ref_elem]] = addres_new_elem;
+    list->next[addres_ref_elem] = addres_new_elem;
     list->size++;
 
     if (list->size == 1)
         list->prev[list->tail] = addres_new_elem;
+    
+    *ret_addres = addres_new_elem;
+
+    DUMP;
 
     return ok;
 }
@@ -260,6 +231,8 @@ int list_remove(struct List *list, const size_t addres_rem_elem) {
     list->data[addres_rem] = (TypeElem) Poison;
 
     list->size--;
+
+    DUMP;
 
     return ok;
 }
@@ -338,8 +311,8 @@ int list_realloc(struct List *list, const size_t new_capacity) {
         list->data[new_capacity + 1] = (TypeElem) Poison;
         list->next[new_capacity + 1] = list->last_free;
         list->prev[new_capacity + 1] = Poison;
-    }
-    
+    } 
+
     list->capacity = new_capacity;
 
     if (list->size > list->capacity)
@@ -352,6 +325,31 @@ int list_resize(struct List *list, const size_t new_capacity) {
     int check = list_ver(list);
     if (check) return check;
 
+    if (new_capacity > list->size)
+        return list_resize_above_size(list, new_capacity);
+
+    if (check = list_align_ids_by_addresses(list))
+        return check;
+
+    list->next[new_capacity + 1] = list->tail; 
+    list->prev[list->tail] = new_capacity + 1;
+    list->free = new_capacity + 2;
+    list->last_free = list->free;
+    list->next[list->last_free] = list->last_free;
+    list->size = new_capacity;
+
+    if (check = list_realloc(list, new_capacity + 1))
+        return check;
+    
+    DUMP;
+
+    return ok;
+}
+
+int list_resize_above_size(struct List *list, const size_t new_capacity) {
+    int check = list_ver(list);
+    if (check) return check;
+
     if (new_capacity >= list->capacity)
         return list_realloc(list, new_capacity);
     
@@ -360,57 +358,110 @@ int list_resize(struct List *list, const size_t new_capacity) {
 
     size_t cur_pos = list->next[list->head];
 
+    if (check = list_stack(list, new_capacity + 2))
+        return check;
+    
+    if (check = list_realloc(list, new_capacity))
+        return check;
+
+    list->next[new_capacity + 1] = list->tail; 
+    list->free = new_capacity + 1; 
+    list->last_free = list->free;
+    list->next[list->last_free] = list->last_free;
+
+    DUMP;
+
+    return ok;
+}
+
+int list_align_ids_by_addresses(struct List *list) {
+    int check = list_ver(list);
+    if (check) return check;
+
+    for (size_t cur_id = 0, cur_addres = list->next[list->head]; (cur_id < list->size) && (cur_addres != list->tail); cur_id++) {
+        if (cur_addres != cur_id + 2)
+            if (check = list_swap_places_by_addresses(list, cur_addres, cur_id + 2))
+                return check;
+
+        cur_addres = list->next[cur_id + 2];
+    }
+
+    DUMP;
+
+    return ok;
+}
+
+int list_stack(struct List *list, size_t last_acceptable_addres) {
+    int check = list_ver(list);
+    if (check) return check;
+    
+    if (check = list_stack_free(list, last_acceptable_addres))
+        return check;
+
+    size_t cur_pos = list->next[list->head];
+
     for (size_t i = 0; i < list->size; i++) {
         if (cur_pos > list->size + 1) {
-            while (list->free > list->size + 1) {
-                list->free = list->next[list->free];
-                
-                if (list->free == list->last_free) 
-                    break;
-            }
+            if (check = list_swap_places_by_addresses(list, cur_pos, list->free))
+                return check;
 
-            if (list->free > list->size + 1)
-                return fall_from_finding_suitable_free_space;
-            
-            list_swap_places_by_addresses(list, cur_pos, list->free);
+            list->free = list->next[list->free];
         }
 
         cur_pos = list->next[cur_pos];
     }
-
-    cur_pos = list->next[list->free];
-
-    for (size_t i = 0; i < new_capacity - list->size; i++) {
-        if (cur_pos > list->size + 1) {
-            size_t score = 0;
-
-            while (list->free > new_capacity + 1) {
-                list->free = list->next[list->free];
-
-                score++;
-
-                if (score > list->capacity)
-                    return path_to_eternity;
-            }
-
-            if (list->free > new_capacity + 1)
-                return fall_from_finding_suitable_free_space;
-            
-            list_swap_places_by_addresses(list, cur_pos, list->free);
-        }
-
-        cur_pos = list->next[cur_pos];
-    }
-
-    list->next[list->free] = list->free;
-    list->last_free = list->free;
     
-    return list_realloc(list, new_capacity);
+    DUMP;
+
+    return ok;
+}
+
+int list_stack_free(struct List *list, size_t last_acceptable_addres) {
+    int check = list_ver(list);
+    if (check) return check;
+
+    if (last_acceptable_addres < list->size + 2)
+        return impos_enter_addres;
+
+    while (list->free > last_acceptable_addres)
+        list->free = list->next[list->free];
+
+    size_t num_free = last_acceptable_addres - list->size - 1;
+    size_t cur_num_free = 1;
+    size_t cur_addres_free = list->free;
+    size_t score = 0;
+
+    while (cur_num_free < num_free) {
+        if (list->next[cur_addres_free] > last_acceptable_addres) {
+            list->next[cur_addres_free] = list->next[list->next[cur_addres_free]];
+            score++;
+
+            if (score > list->capacity - list->size)
+                return path_to_eternity;
+
+        } else {
+            cur_num_free++;
+            cur_addres_free = list->next[cur_addres_free];
+        }
+    }
+
+    list->next[list->free] = cur_addres_free;
+    list->last_free = list->last_free;
+
+    DUMP;
+    
+    return ok;
 }
 
 int list_swap_places_by_addresses(struct List *list, const size_t pos1, const size_t pos2) {
     int check = list_ver(list);
     if (check) return check;
+
+    if ((pos1 == list->head) || (pos2 == list->head)) 
+        return impos_enter_addres;
+
+    if ((pos1 == list->tail) || (pos2 == list->tail)) 
+        return impos_enter_addres;
 
     if ((pos1 > list->capacity + 1) || (pos2 > list->capacity + 1))
         return impos_enter_addres;
@@ -418,22 +469,54 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
     TypeElem data_h = list->data[pos1];
     size_t next_h = list->next[pos1];
     size_t prev_h = list->prev[pos1];
+    if (pos1 == pos2) 
+        return ok;
 
     list->data[pos1] = list->data[pos2];
-    list->next[pos1] = list->next[pos2];
-    list->prev[list->next[pos1]] = pos1;
-    list->prev[pos1] = list->prev[pos2];
-    list->next[list->prev[pos1]] = pos1;
+    list->data[pos2] = data_h; 
 
-    list->data[pos2] = data_h;
-    list->next[pos2] = next_h;
-    list->prev[list->next[pos2]] = pos2;
-    list->prev[pos2] = prev_h;
-    list->next[list->prev[pos2]] = pos2;
+    if (list->next[pos1] == pos2) {
+        if (list->prev[pos1] != Poison)
+            list->next[list->prev[pos1]] = pos2;
+        
+        list->prev[list->next[pos2]] = pos1;
+        list->prev[pos1] = pos2;
+
+        list->prev[pos2] = prev_h;
+        list->next[pos1] = list->next[pos2];
+        list->next[pos2] = pos1;
+
+    } else if (list->next[pos2] == pos1) {
+        if (list->prev[pos2] != Poison)
+            list->next[list->prev[pos2]] = pos1;
+        
+        list->prev[list->next[pos1]] = pos2;
+        list->prev[pos2] = pos1;
+
+        list->prev[pos1] = list->prev[pos2];
+        list->next[pos2] = next_h;
+        list->next[pos1] = pos2;
+
+    } else {
+        if (list->prev[pos1] != Poison)
+            list->next[list->prev[pos1]] = pos2;
+        if (list->prev[pos2] != Poison)
+            list->next[list->prev[pos2]] = pos1;
+        
+        list->prev[list->next[pos1]] = pos2;
+        list->prev[list->next[pos2]] = pos1;
+
+        list->prev[pos1] = list->prev[pos2]; 
+        list->prev[pos2] = prev_h;
+
+        list->next[pos1] = list->next[pos2];
+        list->next[pos2] = next_h;
+    }
+
+    DUMP;
 
     return ok;
 }
-
 
 int list_dump_html(struct List *list, FILE *dump_file_html, const int line, const char *func, const char *file) {
     int check = list_ver(list);
@@ -447,33 +530,35 @@ int list_dump_html(struct List *list, FILE *dump_file_html, const int line, cons
 
     list_dump_file(list, dump_file_html, line, func, file);
 
-    char graph_file_name_dot[50] = "/home/uso/C_projects/Ded/List/dump/graph000.dot";
-    char graph_file_name_png[50] = "/home/uso/C_projects/Ded/List/dump/graph000.png";
-                                  //012345678901234567890123456789012345678901234567890
-                                  //0         1         2         3         4         5
-    graph_file_name_dot[40] = num / 100 + '0';
-    graph_file_name_png[40] = num / 100 + '0';
-    graph_file_name_dot[41] = (num % 100) / 10 + '0';
-    graph_file_name_png[41] = (num % 100) / 10 + '0';
-    graph_file_name_dot[42] = num % 10 + '0';
-    graph_file_name_png[42] = num % 10 + '0';
+    const int name_file_len = 20;
+    char graph_file_name_dot[name_file_len] = "dump/graph000.dot";
+    char graph_file_name_png[name_file_len] = "dump/graph000.png";
+                                             //0123456789012345678901234567890
+                                             //0         1         2      
+    graph_file_name_dot[10] = num / 100 + '0';
+    graph_file_name_png[10] = num / 100 + '0';
+    graph_file_name_dot[11] = (num % 100) / 10 + '0';
+    graph_file_name_png[11] = (num % 100) / 10 + '0';
+    graph_file_name_dot[12] = num % 10 + '0';
+    graph_file_name_png[12] = num % 10 + '0';
 
     LIST_DUMP_SCHEME(list, graph_file_name_dot);
 
-    char to_system[110] = "dot -T png /home/uso/C_projects/Ded/List/dump/graph000.dot -o /home/uso/C_projects/Ded/List/dump/graph000.png";
-                         //012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
-                         //0         1         2         3         4         5         6         7         8         9         10        11
-    to_system[51] = num / 100 + '0';
-    to_system[102] = num / 100 + '0';
-    to_system[52] = (num % 100) / 10 + '0';
-    to_system[103] = (num % 100) / 10 + '0';
-    to_system[53] = num % 10 + '0';
-    to_system[104] = num % 10 + '0';
+    const int command_system_len = 50;
+    char to_system[command_system_len] = "dot -T png dump/graph000.dot -o dump/graph000.png";
+                         //0123456789012345678901234567890123456789012345678901234567890
+                         //0         1         2         3         4         5  
+    to_system[21] = num / 100 + '0';
+    to_system[42] = num / 100 + '0';
+    to_system[22] = (num % 100) / 10 + '0';
+    to_system[43] = (num % 100) / 10 + '0';
+    to_system[23] = num % 10 + '0';
+    to_system[44] = num % 10 + '0';
 
     printf("%s\n", to_system);
     system(to_system);
 
-    fprintf(dump_file_html, "<img src = \"%s\" />\n", &graph_file_name_png[35]);
+    fprintf(dump_file_html, "<img src = \"%s\" />\n", &graph_file_name_png[5]);
 
     num++;
 
@@ -564,7 +649,7 @@ int list_dump_scheme(const struct List *list, const char *graph_file_name, const
     fprintf(graph_file, "\trankdir = TB;\n");
     fprintf(graph_file, "\tnode [shape = record];\n\n");
 
-    fprintf(graph_file, "\tList [shape = \"record\", style = \"filled\", fillcolor = \"#e5ff15\",  label = \"{ name: %s | size: 7 | capacity: 12 | <H> head: 0 | <T> tail: 1 | <F> free: %lu | <LF> last_free: %lu} \"]\n\n", list_name, list->free, list->last_free);
+    fprintf(graph_file, "\tList [shape = \"record\", style = \"filled\", fillcolor = \"#e5ff15\",  label = \"{ name: %s | size: %lu | capacity: %lu | <H> head: %lu | <T> tail: %li | <F> free: %lu | <LF> last_free: %lu} \"]\n\n", list_name, list->size, list->capacity, list->head, list->tail, list->free, list->last_free);
 
     fprintf(graph_file, "\tstruct0 [shape = record, style = \"filled\", fillcolor = \"#8888ff\", label = \" {data\\[0\\] (Head) | %d |{<fp0> prev %lu | <fn0> next %lu}} \"]; \n", (int) list->data[list->head], list->prev[list->head], list->next[list->head]);
     fprintf(graph_file, "\tstruct1 [shape = record, style = \"filled\", fillcolor = \"#ff5555\", label = \" {data\\[1\\] (Tail) | %d |{<fp1> prev %lu | <fn1> next %lu}} \"]; \n\n", (int) list->data[list->tail], list->prev[list->tail], list->next[list->tail]);
