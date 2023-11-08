@@ -15,7 +15,7 @@ int main() {
     DECRYPT_ERRORS(list_push_front(&list, 13, &test_addres), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 14, &test_addres), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 15, &test_addres), err_file);
-    DECRYPT_ERRORS(list_remove(&list, 100), err_file);
+    //DECRYPT_ERRORS(list_remove(&list, 100), err_file);
     //DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
     DECRYPT_ERRORS(list_push_back(&list, 16, &test_addres), err_file);
     DECRYPT_ERRORS(list_push_back(&list, 17, &test_addres), err_file);
@@ -24,14 +24,15 @@ int main() {
     DECRYPT_ERRORS(list_remove(&list, 5), err_file);
     //DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 20, &test_addres), err_file);
-    DECRYPT_ERRORS(list_push_front(&list, 21, &test_addres), err_file);
     DECRYPT_ERRORS(list_push_front(&list, 22, &test_addres), err_file);
+    DECRYPT_ERRORS(list_push_front(&list, 21, &test_addres), err_file);
+    DECRYPT_ERRORS(list_swap_places_by_addresses(&list, list.free, 2), err_file);
 
     //DECRYPT_ERRORS(list_dump(&list, __LINE__, __func__, __FILE__), err_file);
 
     //DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);
 
-    DECRYPT_ERRORS(list_resize(&list, 15), err_file);
+    //DECRYPT_ERRORS(list_resize(&list, 15), err_file);
     DECRYPT_ERRORS(list_resize(&list, 2), err_file);
 
     //DECRYPT_ERRORS(list_dump_html(&list, dump_htm, __LINE__, __func__, __FILE__), err_file);

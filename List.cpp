@@ -71,16 +71,23 @@ int list_ctor(struct List *list, size_t beg_capacity) {
     list->next[list->tail] = list->head;
     list->prev[list->head] = list->tail;
     list->prev[list->tail] = list->head;
+    list->prev[list->free] = Poison;
 
-    for (size_t i = 2; i < list->capacity + 1; i++) {
+    if (list->capacity > 1) {
+        list->next[list->free] = 3;
+        list->prev[list->last_free] = list->last_free - 1;
+    }
+    
+    for (size_t i = 3; i < list->capacity + 1; i++) {
         list->next[i] = i + 1;
-        list->prev[i] = Poison;
+        list->prev[i] = i - 1;
         list->data[i] = (TypeElem) Poison;
     }
 
     list->data[list->capacity + 1] = (TypeElem) Poison;
+    list->data[list->free] = (TypeElem) Poison;
     list->next[list->capacity + 1] = list->last_free;
-    list->prev[list->capacity + 1] = Poison;
+    //list->prev[list->capacity + 1] = Poison;
 
     DUMP;
 
@@ -231,11 +238,19 @@ int list_push_after(struct List *list, const size_t addres_ref_elem, const TypeE
 
     conditional_realloc_increase(list);
 
-    if (addres_ref_elem >= list->capacity + 2)
+    if (addres_ref_elem >= list->capacity + 2) {
+        DUMP_ERROR(impos_enter_addres);
         return impos_enter_addres;
+    }
+
+    if (list->data[addres_ref_elem] == Poison) {
+        DUMP_ERROR(just_free_elem);
+        return just_free_elem;
+    }
 
     size_t addres_new_elem = list->free;
     list->free = list->next[list->free]; 
+    list->prev[list->free] = Poison;
     list->data[addres_new_elem] = new_elem;
     list->next[addres_new_elem] = list->next[addres_ref_elem];
     list->prev[addres_new_elem] = addres_ref_elem;
@@ -257,12 +272,12 @@ int list_remove(struct List *list, const size_t addres_rem_elem) {
     int check = list_ver(list);
     if (check) return check;
 
-    if ((addres_rem_elem >= list->capacity) || (list->prev[addres_rem_elem] == Poison)) {
+    if (addres_rem_elem >= list->capacity) {
         DUMP_ERROR(impos_enter_addres);
         return impos_enter_addres;
     }
 
-    if (list->prev[addres_rem_elem] == Poison) {
+    if (list->data[addres_rem_elem] == Poison) {
         DUMP_ERROR(just_free_elem);
         return just_free_elem;
     }
@@ -270,9 +285,9 @@ int list_remove(struct List *list, const size_t addres_rem_elem) {
     list->prev[list->next[addres_rem_elem]] = list->prev[addres_rem_elem];
     list->next[list->prev[addres_rem_elem]] = list->next[addres_rem_elem];
     list->next[list->last_free] = addres_rem_elem;
+    list->prev[addres_rem_elem] = list->last_free;
     list->last_free = addres_rem_elem;
     list->next[addres_rem_elem] = list->last_free;
-    list->prev[addres_rem_elem] = Poison;
     list->data[addres_rem_elem] = (TypeElem) Poison;
 
     list->size--;
@@ -355,23 +370,26 @@ int list_realloc(struct List *list, const size_t new_capacity) {
 
     if (new_capacity > list->capacity) {
         list->next[list->last_free] = list->capacity + 2;
+        list->prev[list->capacity + 2] = list->last_free;
         list->last_free = new_capacity + 1;
 
         for (size_t i = list->capacity + 2; i < new_capacity + 1; i++) {
             list->data[i] = (TypeElem) Poison;
             list->next[i] = i + 1;
-            list->prev[i] = Poison;
+            list->prev[i + 1] = i;
         }
 
-        list->data[new_capacity + 1] = (TypeElem) Poison;
-        list->next[new_capacity + 1] = list->last_free;
-        list->prev[new_capacity + 1] = Poison;
+        list->data[list->last_free] = (TypeElem) Poison;
+        list->next[list->last_free] = list->last_free;
     } 
 
     list->capacity = new_capacity;
 
     if (list->size > list->capacity)
         list->size = list->capacity;
+
+    //just for debugging
+    DUMP;
 
     return ok;
 }
@@ -524,48 +542,36 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
     int check = list_ver(list);
     if (check) return check;
 
-    if ((pos1 == list->head) || (pos2 == list->head)) {
+    if ((pos1 == list->head) || (pos2 == list->head) || 
+        (pos1 == list->tail) || (pos2 == list->tail)) { //don't swap with head and tial
         DUMP_ERROR(impos_enter_addres);
         return impos_enter_addres;
     }
 
-    if ((pos1 == list->tail) || (pos2 == list->tail)) {
+    if ((pos1 > list->capacity + 1) || (pos2 > list->capacity + 1)) { 
         DUMP_ERROR(impos_enter_addres);
         return impos_enter_addres;
     }
 
-    if ((pos1 > list->capacity + 1) || (pos2 > list->capacity + 1)) {
-        DUMP_ERROR(impos_enter_addres);
-        return impos_enter_addres;
-    }
-
-    if (pos1 == pos2) 
+    if (pos1 == pos2) //don's swap with its own
         return ok;
     
-    if ((list->prev[pos1] == Poison) && (list->prev[pos2] == Poison))
+    if ((list->data[pos1] == Poison) && (list->data[pos2] == Poison)) //don's swap free elem
         return ok;
     
     TypeElem data_h = list->data[pos1];
     size_t next_h = list->next[pos1];
     size_t prev_h = list->prev[pos1];
 
-    list->data[pos1] = list->data[pos2];
+    list->data[pos1] = list->data[pos2]; //swap data
     list->data[pos2] = data_h; 
-
-    if (list->free == pos1) {
-        list->free = pos2;
-    
-    } else if (list->free == pos2) {
-        list->free = pos1;
-    }
 
 #ifdef DEBUGONL
     fprintf(list_dump_file_html, "<font color = \"blue\" size = \"6\">\n SWAP: pos1 = %lu, pos2 = %lu \n</font>", pos1, pos2);
 #endif
 
-    if (list->next[pos1] == pos2) {
-        if (list->prev[pos1] != Poison)
-            list->next[list->prev[pos1]] = pos2;
+    if (list->next[pos1] == pos2) { //it is possible only when both of elements is not free
+        list->next[list->prev[pos1]] = pos2;
         
         list->prev[list->next[pos2]] = pos1;
 
@@ -576,9 +582,8 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
         list->next[pos1] = list->next[pos2];
         list->next[pos2] = pos1;
 
-    } else if (list->next[pos2] == pos1) {
-        if (list->prev[pos2] != Poison)
-            list->next[list->prev[pos2]] = pos1;
+    } else if (list->next[pos2] == pos1) { //it is possible only when both of elements is not free
+        list->next[list->prev[pos2]] = pos1;
         
         list->prev[list->next[pos1]] = pos2;
         list->prev[pos2] = pos1;
@@ -587,54 +592,50 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
         list->next[pos2] = next_h;
         list->next[pos1] = pos2;
 
-    } else {
-        if (list->prev[pos1] != Poison)
-            list->next[list->prev[pos1]] = pos2;
+    } else { 
+        list->next[list->prev[pos1]] = pos2; 
 
-        if (list->prev[pos2] != Poison)
-            list->next[list->prev[pos2]] = pos1;
-        
-        if (list->prev[list->next[pos1]] != Poison)
+        list->next[list->prev[pos2]] = pos1;
+
+        if (pos1 != list->last_free)
             list->prev[list->next[pos1]] = pos2;
 
-        if (list->prev[list->next[pos2]] != Poison)
+        if (pos2 != list->last_free)
             list->prev[list->next[pos2]] = pos1;
 
-        list->prev[pos1] = list->prev[pos2]; 
-        list->prev[pos2] = prev_h;
+        if (pos1 == list->free) {
+            list->prev[pos1] = list->prev[pos2];
+            list->prev[pos2] = Poison;
+            list->free = pos2;
 
-        list->next[pos1] = list->next[pos2];
-        list->next[pos2] = next_h;
-
-        if (list->last_free == pos2) {
-            size_t cur_num = list->free;
-            while (list->next[cur_num] != list->last_free)
-                cur_num = list->next[cur_num];
-            
-            list->next[cur_num] = pos1;
-            list->last_free = pos1;
-            list->next[list->last_free] = pos1;
-
-        } else if (list->last_free == pos1) {
-            size_t cur_num = list->free;
-            while (list->next[cur_num] != list->last_free)
-                cur_num = list->next[cur_num];
-            
-            list->next[cur_num] = pos2;
-            list->last_free = pos2;
-            list->next[list->last_free] = pos2;
-
-        } else if (list->prev[pos1] == Poison) {
-            list->next[list->last_free] = pos1;
-            list->last_free = pos1;
-            list->next[list->last_free] = pos1;
-
-        } else if (list->prev[pos2] == Poison) {
-            list->next[list->last_free] = pos2;
-            list->last_free = pos2;
-            list->next[list->last_free] = pos2;
+        } else if (pos2 == list->free) {
+            list->prev[pos2] = list->prev[pos1];
+            list->prev[pos1] = Poison;
+            list->free = pos1;
+        } else {
+            list->prev[pos1] = list->prev[pos2]; 
+            list->prev[pos2] = prev_h;
         }
 
+        if (pos2 != list->last_free) {
+            list->next[pos1] = list->next[pos2];
+
+        } else {
+            list->next[pos1] = pos1;
+        }
+
+        if (pos1 != list->last_free) {
+            list->next[pos2] = next_h;
+
+        } else {
+            list->next[pos2] = pos2;
+        }
+
+        if (pos2 == list->last_free) {
+            list->last_free = pos1;
+        } else if (pos1 == list->last_free) {
+            list->last_free = pos2;
+        }
     }
 
     DUMP;
@@ -738,14 +739,8 @@ int list_dump_file(const struct List *list, FILE *dump_file, const int line, con
     
     fprintf(dump_file, "\n");
 
-    for (size_t i = 0; i < list->capacity + 2; i++) {
-        if ((list->next[i]) != Poison) {
-            fprintf(dump_file, "%6lu ", list->next[i]);
-
-        } else {
-            fprintf(dump_file, "Poison ");
-        }
-    }
+    for (size_t i = 0; i < list->capacity + 2; i++)
+        fprintf(dump_file, "%6lu ", list->next[i]);
 
     fprintf(dump_file, "\n");
 
@@ -816,22 +811,19 @@ int list_dump_scheme(const struct List *list, const char *graph_file_name, const
 
     fprintf(graph_file, "\n");
     
-    cur_pos = list->free;
+    cur_pos = list->next[list->free];
 
-    for (size_t i = 0; i < list->capacity - list->size; i++) {
-        if (list->data[cur_pos] != Poison) {
-            fprintf(graph_file, "\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#88bb88\", label = \" {data\\[%lu\\] | %d |{<fp%lu> prev %lu | <fn%lu> next %lu}} \"]; \n", cur_pos, cur_pos, (int) list->data[cur_pos], cur_pos, list->prev[cur_pos], cur_pos, list->next[cur_pos]);
-            fprintf(graph_file, "\tstruct%lu:<fn%lu> -> struct%lu:<fp%lu> [color = \"#115511\"];\n\n", cur_pos, cur_pos, list->next[cur_pos], list->next[cur_pos]);
-
-        } else {
-            fprintf(graph_file, "\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#88bb88\", label = \" {data\\[%lu\\] | Poison |{<fp%lu> prev Poison | <fn%lu> next %lu}} \"]; \n", cur_pos, cur_pos, cur_pos, cur_pos, list->next[cur_pos]);
-            fprintf(graph_file, "\tstruct%lu:<fn%lu> -> struct%lu:<fp%lu> [color = \"#115511\"];\n\n", cur_pos, cur_pos, list->next[cur_pos], list->next[cur_pos]);
-        }
+    for (size_t i = 1; i < list->capacity - list->size; i++) {
+        fprintf(graph_file, "\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#88bb88\", label = \" {data\\[%lu\\] | Poison |{<fp%lu> prev %lu | <fn%lu> next %lu}} \"]; \n", cur_pos, cur_pos, cur_pos, list->prev[cur_pos], cur_pos, list->next[cur_pos]);
+        fprintf(graph_file, "\tstruct%lu:<fn%lu> -> struct%lu:<fp%lu> [color = \"#115511\"];\n\n", cur_pos, cur_pos, list->next[cur_pos], list->next[cur_pos]);
 
         cur_pos = list->next[cur_pos];
     }
 
-    fprintf(graph_file, "\n\tfree [shape = record, style = \"filled\", fillcolor = \"#6666aa\", label = \"free\"]; \n");
+    fprintf(graph_file, "\n\tstruct%lu [shape = record, style = \"filled\", fillcolor = \"#88bb88\", label = \" {data\\[%lu\\] | Poison |{<fp%lu> prev Poison | <fn%lu> next %lu}} \"]; \n", list->free, list->free, list->free, list->free, list->next[list->free]);
+    fprintf(graph_file, "\tstruct%lu:<fn%lu> -> struct%lu:<fp%lu> [color = \"#115511\"];\n\n", list->free, list->free, list->next[list->free], list->next[list->free]);
+
+    fprintf(graph_file, "\tfree [shape = record, style = \"filled\", fillcolor = \"#6666aa\", label = \"free\"]; \n");
     fprintf(graph_file, "\tlast_free [shape = record, style = \"filled\", fillcolor = \"#cc5555\", label = \"last_free\"];\n");
 
     fprintf(graph_file, "\tfree -> struct%lu:<fp%lu> [color = \"#6666aa\"];\n", list->free, list->free);
