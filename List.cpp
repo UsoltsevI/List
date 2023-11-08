@@ -87,7 +87,6 @@ int list_ctor(struct List *list, size_t beg_capacity) {
     list->data[list->capacity + 1] = (TypeElem) Poison;
     list->data[list->free] = (TypeElem) Poison;
     list->next[list->capacity + 1] = list->last_free;
-    //list->prev[list->capacity + 1] = Poison;
 
     DUMP;
 
@@ -388,7 +387,6 @@ int list_realloc(struct List *list, const size_t new_capacity) {
     if (list->size > list->capacity)
         list->size = list->capacity;
 
-    //just for debugging
     DUMP;
 
     return ok;
@@ -409,6 +407,7 @@ int list_resize(struct List *list, const size_t new_capacity) {
     list->free = new_capacity + 2;
     list->last_free = list->free;
     list->next[list->last_free] = list->last_free;
+    list->prev[list->free] = Poison;
     list->size = new_capacity;
 
     if (check = list_realloc(list, new_capacity + 1))
@@ -441,7 +440,6 @@ int list_resize_above_size(struct List *list, const size_t new_capacity) {
 
     list->next[new_capacity + 1] = list->tail; 
     list->last_free = new_capacity + 1; 
-    //list->last_free = list->free;
     list->next[list->last_free] = list->last_free;
 
     DUMP;
@@ -485,8 +483,6 @@ int list_stack(struct List *list, size_t last_acceptable_addres) {
                 return check;
         }
 
-        //list->free = list->next[list->free]; in loop?
-
         cur_pos = list->next[cur_pos];
     }
     
@@ -528,8 +524,6 @@ int list_stack_free(struct List *list, size_t last_acceptable_addres) {
         }
     }
 
-    //list->next[list->free] = cur_addres_free;
-    //list->last_free = list->last_free;
     list->last_free = cur_addres_free;
     list->next[list->last_free] = list->last_free;
 
@@ -576,7 +570,6 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
         list->prev[list->next[pos2]] = pos1;
 
         list->prev[pos1] = pos2;
-
         list->prev[pos2] = prev_h;
 
         list->next[pos1] = list->next[pos2];
@@ -594,7 +587,6 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
 
     } else { 
         list->next[list->prev[pos1]] = pos2; 
-
         list->next[list->prev[pos2]] = pos1;
 
         if (pos1 != list->last_free)
@@ -612,6 +604,7 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
             list->prev[pos2] = list->prev[pos1];
             list->prev[pos1] = Poison;
             list->free = pos1;
+
         } else {
             list->prev[pos1] = list->prev[pos2]; 
             list->prev[pos2] = prev_h;
@@ -626,7 +619,6 @@ int list_swap_places_by_addresses(struct List *list, const size_t pos1, const si
 
         if (pos1 != list->last_free) {
             list->next[pos2] = next_h;
-
         } else {
             list->next[pos2] = pos2;
         }

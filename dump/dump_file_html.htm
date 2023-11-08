@@ -1,299 +1,299 @@
 <pre>
 <font size = "5">
-In file List.cpp in func list_ctor at line 92
+In file List.cpp in func list_ctor at line 91
 is_ctor = 1
 is_dtor = 0
 capacity = 2
 size = 0
 free = 2
 last_free = 3
-list->data[0x7fffdb19d670]:
+list->data[0x7fffdc4c7670]:
      0      1      2      3 
      0      0 Poison Poison 
-list->next[0x7fffdb19d690]:
+list->next[0x7fffdc4c7690]:
      0      1      2      3 
      1      0      3      3 
-list->prev[0x7fffdb19d6c0]:
+list->prev[0x7fffdc4c76c0]:
      0      1      2      3 
      1      0 Poison      2 
 </font>
 <img src = "graph000.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_realloc at line 392
+In file List.cpp in func list_realloc at line 390
 is_ctor = 1
 is_dtor = 0
 capacity = 4
 size = 0
 free = 2
 last_free = 5
-list->data[0x7fffdb19d670]:
+list->data[0x7fffdc4c7670]:
      0      1      2      3      4      5 
      0      0 Poison Poison Poison Poison 
-list->next[0x7fffdb19f8f0]:
+list->next[0x7fffdc4c98f0]:
      0      1      2      3      4      5 
      1      0      3      4      5      5 
-list->prev[0x7fffdb19f930]:
+list->prev[0x7fffdc4c9930]:
      0      1      2      3      4      5 
      1      0 Poison      2      3      4 
 </font>
 <img src = "graph001.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 4
 size = 1
 free = 3
 last_free = 5
-list->data[0x7fffdb19d670]:
+list->data[0x7fffdc4c7670]:
      0      1      2      3      4      5 
      0      0     13 Poison Poison Poison 
-list->next[0x7fffdb19f8f0]:
+list->next[0x7fffdc4c98f0]:
      0      1      2      3      4      5 
      2      0      1      4      5      5 
-list->prev[0x7fffdb19f930]:
+list->prev[0x7fffdc4c9930]:
      0      1      2      3      4      5 
      1      2      0 Poison      3      4 
 </font>
 <img src = "graph002.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 4
 size = 2
 free = 4
 last_free = 5
-list->data[0x7fffdb19d670]:
+list->data[0x7fffdc4c7670]:
      0      1      2      3      4      5 
      0      0     13     14 Poison Poison 
-list->next[0x7fffdb19f8f0]:
+list->next[0x7fffdc4c98f0]:
      0      1      2      3      4      5 
      3      0      1      2      5      5 
-list->prev[0x7fffdb19f930]:
+list->prev[0x7fffdc4c9930]:
      0      1      2      3      4      5 
      1      2      3      0 Poison      4 
 </font>
 <img src = "graph003.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_realloc at line 392
+In file List.cpp in func list_realloc at line 390
 is_ctor = 1
 is_dtor = 0
 capacity = 8
 size = 2
 free = 4
 last_free = 9
-list->data[0x7fffdb19f970]:
+list->data[0x7fffdc4c9970]:
      0      1      2      3      4      5      6      7      8      9 
      0      0     13     14 Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19f9a0]:
+list->next[0x7fffdc4c99a0]:
      0      1      2      3      4      5      6      7      8      9 
      3      0      1      2      5      6      7      8      9      9 
-list->prev[0x7fffdb19fa00]:
+list->prev[0x7fffdc4c9a00]:
      0      1      2      3      4      5      6      7      8      9 
      1      2      3      0 Poison      4      5      6      7      8 
 </font>
 <img src = "graph004.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 8
 size = 3
 free = 5
 last_free = 9
-list->data[0x7fffdb19f970]:
+list->data[0x7fffdc4c9970]:
      0      1      2      3      4      5      6      7      8      9 
      0      0     13     14     15 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19f9a0]:
+list->next[0x7fffdc4c99a0]:
      0      1      2      3      4      5      6      7      8      9 
      4      0      1      2      3      6      7      8      9      9 
-list->prev[0x7fffdb19fa00]:
+list->prev[0x7fffdc4c9a00]:
      0      1      2      3      4      5      6      7      8      9 
      1      2      3      4      0 Poison      5      6      7      8 
 </font>
 <img src = "graph005.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 8
 size = 4
 free = 6
 last_free = 9
-list->data[0x7fffdb19f970]:
+list->data[0x7fffdc4c9970]:
      0      1      2      3      4      5      6      7      8      9 
      0      0     13     14     15     16 Poison Poison Poison Poison 
-list->next[0x7fffdb19f9a0]:
+list->next[0x7fffdc4c99a0]:
      0      1      2      3      4      5      6      7      8      9 
      4      0      5      2      3      1      7      8      9      9 
-list->prev[0x7fffdb19fa00]:
+list->prev[0x7fffdc4c9a00]:
      0      1      2      3      4      5      6      7      8      9 
      1      5      3      4      0      2 Poison      6      7      8 
 </font>
 <img src = "graph006.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 8
 size = 5
 free = 7
 last_free = 9
-list->data[0x7fffdb19f970]:
+list->data[0x7fffdc4c9970]:
      0      1      2      3      4      5      6      7      8      9 
      0      0     13     14     15     16     17 Poison Poison Poison 
-list->next[0x7fffdb19f9a0]:
+list->next[0x7fffdc4c99a0]:
      0      1      2      3      4      5      6      7      8      9 
      4      0      5      2      3      6      1      8      9      9 
-list->prev[0x7fffdb19fa00]:
+list->prev[0x7fffdc4c9a00]:
      0      1      2      3      4      5      6      7      8      9 
      1      6      3      4      0      2      5 Poison      7      8 
 </font>
 <img src = "graph007.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 8
 size = 6
 free = 8
 last_free = 9
-list->data[0x7fffdb19f970]:
+list->data[0x7fffdc4c9970]:
      0      1      2      3      4      5      6      7      8      9 
      0      0     13     14     15     16     17     18 Poison Poison 
-list->next[0x7fffdb19f9a0]:
+list->next[0x7fffdc4c99a0]:
      0      1      2      3      4      5      6      7      8      9 
      4      0      5      2      3      6      7      1      9      9 
-list->prev[0x7fffdb19fa00]:
+list->prev[0x7fffdc4c9a00]:
      0      1      2      3      4      5      6      7      8      9 
      1      7      3      4      0      2      5      6 Poison      8 
 </font>
 <img src = "graph008.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_realloc at line 392
+In file List.cpp in func list_realloc at line 390
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 6
 free = 8
 last_free = 17
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     13     14     15     16     17     18 Poison Poison Poison Poison Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      4      0      5      2      3      6      7      1      9     10     11     12     13     14     15     16     17     17 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      7      3      4      0      2      5      6 Poison      8      9     10     11     12     13     14     15     16 
 </font>
 <img src = "graph009.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 7
 free = 9
 last_free = 17
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     13     14     15     16     17     18     19 Poison Poison Poison Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      4      0      5      2      3      6      7      8      1     10     11     12     13     14     15     16     17     17 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      3      4      0      2      5      6      7 Poison      9     10     11     12     13     14     15     16 
 </font>
 <img src = "graph010.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_remove at line 295
+In file List.cpp in func list_remove at line 294
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 6
 free = 9
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     13     14     15 Poison     17     18     19 Poison Poison Poison Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      4      0      6      2      3      5      7      8      1     10     11     12     13     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      3      4      0     17      2      6      7 Poison      9     10     11     12     13     14     15     16 
 </font>
 <img src = "graph011.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 7
 free = 10
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     13     14     15 Poison     17     18     19     20 Poison Poison Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      9      0      6      2      3      5      7      8      1      4     11     12     13     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      3      4      9     17      2      6      7      0 Poison     10     11     12     13     14     15     16 
 </font>
 <img src = "graph012.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 8
 free = 11
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     13     14     15 Poison     17     18     19     20     22 Poison Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
     10      0      6      2      3      5      7      8      1      4      9     12     13     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      3      4      9     17      2      6      7     10      0 Poison     11     12     13     14     15     16 
 </font>
 <img src = "graph013.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_push_after at line 266
+In file List.cpp in func list_push_after at line 265
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 12
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     13     14     15 Poison     17     18     19     20     22     21 Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
     11      0      6      2      3      5      7      8      1      4      9     10     13     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      3      4      9     17      2      6      7     10     11      0 Poison     12     13     14     15     16 
 </font>
@@ -302,20 +302,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 12, pos2 = 2 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 2
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0 Poison     14     15 Poison     17     18     19     20     22     21     13 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
     11      0     13     12      3      5      7      8      1      4      9     10      6     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8 Poison      4      9     17     12      6      7     10     11      0      3      2     13     14     15     16 
 </font>
@@ -324,20 +324,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 11, pos2 = 2 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     14     15 Poison     17     18     19     20     22 Poison     13 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0     10     12      3      5      7      8      1      4      9     13      6     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      0      4      9     17     12      6      7     10      2 Poison      3     11     13     14     15     16 
 </font>
@@ -346,20 +346,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 10, pos2 = 3 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     15 Poison     17     18     19     20     14 Poison     13 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      9     10      5      7      8      1      4     12     13      6     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      0      2      9     17     12      6      7      3      4 Poison     10     11     13     14     15     16 
 </font>
@@ -368,20 +368,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 9, pos2 = 4 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 5
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     20 Poison     17     18     19     15     14 Poison     13 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      4      9      5      7      8      1     10     12     13      6     14     15     16     17      5 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      0      2      3     17     12      6      7      4      9 Poison     10     11     13     14     15     16 
 </font>
@@ -390,20 +390,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 9, pos2 = 5 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 9
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     20     15     17     18     19 Poison     14 Poison     13 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      4      5     10      7      8      1      9     12     13      6     14     15     16     17      9 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      0      2      3      4     12      6      7     17      5 Poison     10     11     13     14     15     16 
 </font>
@@ -412,20 +412,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 10, pos2 = 6 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 9
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     20     15     14     18     19 Poison     17 Poison     13 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      4      5      6     12      8      1      9      7     13     10     14     15     16     17      9 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      0      2      3      4      5     10      7     17     12 Poison      6     11     13     14     15     16 
 </font>
@@ -434,20 +434,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 12, pos2 = 7 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 9
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     20     15     14     13     19 Poison     17 Poison     18 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      4      5      6      7     10      1      9     12     13      8     14     15     16     17      9 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1      8      0      2      3      4      5      6     12     17      7 Poison     10     11     13     14     15     16 
 </font>
@@ -456,20 +456,20 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 10, pos2 = 8 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 9
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     20     15     14     13     17 Poison     19 Poison     18 Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      4      5      6      7      8     12      9      1     13     10     14     15     16     17      9 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1     10      0      2      3      4      5      6      7     17     12 Poison      8     11     13     14     15     16 
 </font>
@@ -478,102 +478,102 @@ list->prev[0x7fffdb19fb50]:
  SWAP: pos1 = 12, pos2 = 9 
 </font><pre>
 <font size = "5">
-In file List.cpp in func list_swap_places_by_addresses at line 641
+In file List.cpp in func list_swap_places_by_addresses at line 633
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 12
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     20     15     14     13     17     18     19 Poison Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      4      5      6      7      8      9     10      1     13     12     14     15     16     17     12 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1     10      0      2      3      4      5      6      7      8      9 Poison     17     11     13     14     15     16 
 </font>
 <img src = "graph023.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_align_ids_by_addresses at line 464
+In file List.cpp in func list_align_ids_by_addresses at line 462
 is_ctor = 1
 is_dtor = 0
 capacity = 16
 size = 9
 free = 11
 last_free = 12
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      0      0     21     22     20     15     14     13     17     18     19 Poison Poison Poison Poison Poison Poison Poison 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      2      0      3      4      5      6      7      8      9     10      1     13     12     14     15     16     17     12 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17 
      1     10      0      2      3      4      5      6      7      8      9 Poison     17     11     13     14     15     16 
 </font>
 <img src = "graph024.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_realloc at line 392
+In file List.cpp in func list_realloc at line 390
 is_ctor = 1
 is_dtor = 0
 capacity = 3
 size = 2
 free = 4
 last_free = 4
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4 
      0      0     21     22     20 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4 
      2      0      3      1      4 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4 
-     1      3      0      2      3 
+     1      3      0      2 Poison 
 </font>
 <img src = "graph025.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_resize at line 417
+In file List.cpp in func list_resize at line 416
 is_ctor = 1
 is_dtor = 0
 capacity = 3
 size = 2
 free = 4
 last_free = 4
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4 
      0      0     21     22     20 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4 
      2      0      3      1      4 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4 
-     1      3      0      2      3 
+     1      3      0      2 Poison 
 </font>
 <img src = "graph026.png" />
 <pre>
 <font size = "5">
-In file List.cpp in func list_dtor at line 104
+In file List.cpp in func list_dtor at line 103
 is_ctor = 1
 is_dtor = 0
 capacity = 3
 size = 2
 free = 4
 last_free = 4
-list->data[0x7fffdb19fa60]:
+list->data[0x7fffdc4c9a60]:
      0      1      2      3      4 
      0      0     21     22     20 
-list->next[0x7fffdb19fab0]:
+list->next[0x7fffdc4c9ab0]:
      0      1      2      3      4 
      2      0      3      1      4 
-list->prev[0x7fffdb19fb50]:
+list->prev[0x7fffdc4c9b50]:
      0      1      2      3      4 
-     1      3      0      2      3 
+     1      3      0      2 Poison 
 </font>
 <img src = "graph027.png" />
 <font color = "#ff0000" size = "7"> NUM_ERRORS: 0 </font>
